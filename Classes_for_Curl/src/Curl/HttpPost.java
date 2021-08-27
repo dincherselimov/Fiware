@@ -45,6 +45,7 @@ public class HttpPost {
 //                        "    ]\n" +
 //                        "}";
 
+        //this code below works good, it can provision a device correctly
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(postEndpoint))
                 .header("Content-Type", "application/json")

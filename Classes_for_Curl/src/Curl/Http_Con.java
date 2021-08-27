@@ -87,7 +87,7 @@ public class Http_Con {
         connection.setDoOutput(true);
 
         //Json formatted input string
-        String jsonInputString = "";
+        String jsonInputString = ""; //put json string content
 
         try(OutputStream os = connection.getOutputStream()) {
             byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
@@ -105,7 +105,6 @@ public class Http_Con {
             System.out.println(response.toString());
         }
     }
-
 
 }
 
