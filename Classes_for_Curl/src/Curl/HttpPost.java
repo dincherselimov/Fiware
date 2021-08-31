@@ -8,7 +8,6 @@ import java.net.http.HttpResponse;
 
 import org.junit.Test;
 
-
 /**
  * This class shows how to send a POST Request with JSON using Java 11 HttpClient API.
  */
@@ -21,19 +20,20 @@ public class HttpPost {
         //String postEndpoint = "http://192.168.0.104:1026/v1/queryContext";
 
         // JSON input data
-        String inputJson = "{\n" +
-                        "    \"devices\": [\n" +
-                        "        {\n" +
-                        "            \"device_id\": \"sensor01\",\n" +
-                        "            \"entity_name\": \"LivingRoomSensor\",\n" +
-                        "            \"entity_type\": \"multiSensor\",\n" +
-                        "            \"attributes\": [\n" +
-                        "                  { \"object_id\": \"t\", \"name\": \"Temperature\", \"type\": \"celsius\" },\n" +
-                        "                  { \"object_id\": \"l\", \"name\": \"Luminosity\", \"type\": \"lumens\" }\n" +
-                        "            ]\n" +
-                        "        }\n" +
-                        "    ]\n" +
-                        "}";
+        String inputJson = """
+                {
+                    "devices": [
+                        {
+                            "device_id": "sensor0999",
+                            "entity_name": "LivingRoomSensor",
+                            "entity_type": "multiSensor",
+                            "attributes": [
+                                  { "object_id": "t", "name": "Temperature", "type": "celsius" },
+                                  { "object_id": "l", "name": "Luminosity", "type": "lumens" }
+                            ]
+                        }
+                    ]
+                }""";
 
 //                "{\n" +
 //                        "    \"entities\": [\n" +

@@ -1,5 +1,7 @@
 package Curl;
 
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,6 +11,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Http_Con {
 
@@ -18,11 +22,11 @@ public class Http_Con {
 
         Http_Con connection = new Http_Con();
         //call the getRequest method
-        connection.GetRequest();
+        //connection.GetRequest();
         //call the postRequest
         connection.PostRequest();
-
     }
+
     public void GetRequest() {
         BufferedReader reader;
         String lines;
@@ -83,11 +87,12 @@ public class Http_Con {
         connection.setRequestProperty("Fiware-ServicePath","/environment");
 
 
+
         //make sure that will be able to write content to the connection output stream
         connection.setDoOutput(true);
 
         //Json formatted input string
-        String jsonInputString = ""; //put json string content
+        String jsonInputString = "{}\n\n"; //put json string content
 
         try(OutputStream os = connection.getOutputStream()) {
             byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
@@ -105,6 +110,5 @@ public class Http_Con {
             System.out.println(response.toString());
         }
     }
-
 }
 
