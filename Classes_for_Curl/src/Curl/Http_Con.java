@@ -1,30 +1,28 @@
 package Curl;
 
-import com.google.gson.Gson;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class Http_Con {
 
     private static HttpURLConnection connection;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
         Http_Con connection = new Http_Con();
         //call the getRequest method
-        //connection.GetRequest();
-        //call the postRequest
+        connection.GetRequest();
+
+        //call the postRequest method
         connection.PostRequest();
+
+        //call the sendPost method
+        connection.sendPost();
+
+
     }
 
     public void GetRequest() {
@@ -71,6 +69,8 @@ public class Http_Con {
         }
     }
 
+
+    //variant 1 za post
     public void PostRequest() throws IOException {
         //set the url
         String url = "http://192.168.0.104:4041/iot/devices";
@@ -83,23 +83,49 @@ public class Http_Con {
         //set hte request properties(headers etc.)
         connection.setRequestProperty("Content-Type", "application/json; utf-8");
         connection.setRequestProperty("Accept", "application/json");
-        connection.setRequestProperty("Fiware-Service"," myHome");
-        connection.setRequestProperty("Fiware-ServicePath","/environment");
+        connection.setRequestProperty("Fiware-Service", " myHome");
+        connection.setRequestProperty("Fiware-ServicePath", "/environment");
 
 
+        //Json formatted input string
+        String jsonString = """
+                {
+                  "devices": [
+                    {
+                      "device_id": "sensor7777",
+                      "entity_name": "LivingRoomSensor",
+                      "entity_type": "multiSensor",
+                      "attributes": [
+                        {
+                          "object_id": "t",
+                          "name": "Temperature",
+                          "type": "celsius"
+                        },
+                        {
+                          "object_id": "l",
+                          "name": "Luminosity",
+                          "type": "lumens"
+                        }
+                      ]
+                    }
+                  ]
+                }""";
+        //Gson gson = new Gson();
+        //convert java object to JSON format
+        //String json = gson.toJson(devices1);
+
+        //System.out.println(json);
 
         //make sure that will be able to write content to the connection output stream
         connection.setDoOutput(true);
 
-        //Json formatted input string
-        String jsonInputString = "{}\n\n"; //put json string content
 
-        try(OutputStream os = connection.getOutputStream()) {
-            byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
+        try (OutputStream os = connection.getOutputStream()) {
+            byte[] input = jsonString.getBytes(StandardCharsets.UTF_8);
             os.write(input, 0, input.length);
         }
 
-        try(BufferedReader br = new BufferedReader(
+        try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
             StringBuilder response = new StringBuilder();
             String responseLine = null;
@@ -107,6 +133,68 @@ public class Http_Con {
                 response.append(responseLine.trim());
             }
             //print the result
+            System.out.println(response.toString());
+        }
+    }
+
+
+    // variant 2 za post
+    public void sendPost() throws IOException {
+
+        String url2 = "http://192.168.0.104:4041/iot/devices";
+
+        HttpURLConnection httpClient = (HttpURLConnection) new URL(url2).openConnection();
+
+        //add request header
+        httpClient.setRequestMethod("POST");
+        httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
+        httpClient.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+
+        //set hte request properties(headers etc.)
+        httpClient.setRequestProperty("Content-Type", "application/json; utf-8");
+        httpClient.setRequestProperty("Accept", "application/json");
+        httpClient.setRequestProperty("Fiware-Service", " myHome");
+        httpClient.setRequestProperty("Fiware-ServicePath", "/environment");
+
+
+        String urlParameters = "{\n" +
+                "    \"devices\": [\n" +
+                "        {\n" +
+                "            \"device_id\": \"sensor01\",\n" +
+                "            \"entity_name\": \"LivingRoomSensor\",\n" +
+                "            \"entity_type\": \"multiSensor\",\n" +
+                "            \"attributes\": [\n" +
+                "                  { \"object_id\": \"t\", \"name\": \"Temperature\", \"type\": \"celsius\" },\n" +
+                "                  { \"object_id\": \"l\", \"name\": \"Luminosity\", \"type\": \"lumens\" }\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+
+        // Send post request
+        httpClient.setDoOutput(true);
+        try (DataOutputStream wr = new DataOutputStream(httpClient.getOutputStream())) {
+            wr.writeBytes(urlParameters);
+            wr.flush();
+        }
+
+        int responseCode = httpClient.getResponseCode();
+        System.out.println("\nSending 'POST' request to URL : " + url2);
+        System.out.println("Post parameters : " + urlParameters);
+        System.out.println("Response Code : " + responseCode);
+
+        try (BufferedReader in = new BufferedReader(
+                new InputStreamReader(httpClient.getInputStream()))) {
+
+            String line;
+            StringBuilder response = new StringBuilder();
+
+            while ((line = in.readLine()) != null) {
+                response.append(line);
+            }
+
+            //print result
             System.out.println(response.toString());
         }
     }
