@@ -1,4 +1,4 @@
-package Curl;
+package HttpPost;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

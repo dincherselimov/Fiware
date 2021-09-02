@@ -1,4 +1,4 @@
-package Curl;
+package HttpPost;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,12 +12,12 @@ public class POST {
 
     /**
      * HTTP POST Request with HTTPUrlConnection
-     * @throws IOException
      */
     public void PostRequest() throws IOException {
+        JsonStrings strings = new JsonStrings();
 
         // Set the URL
-        String url = "http://192.168.0.104:1026/v1/queryContext";
+        String url = "http://192.168.0.104:4041/iot/devices";
         URL obj = new URL(url);
 
         //open the connection
@@ -33,24 +33,24 @@ public class POST {
         connection.setRequestProperty("Fiware-ServicePath", "/environment");
 
 
-        //Json formatted input string
-        String jsonString = "{\n" +
-                "    \"entities\": [\n" +
-                "        {\n" +
-                "            \"isPattern\": \"false\",\n" +
-                "            \"id\": \"LivingRoomSensor\",\n" +
-                "            \"type\": \"multiSensor\"\n" +
-                "        }\n" +
-                "    ]\n" +
-                "}";
+        /**
+         * Json formatted input string
+         */
+
+        String jsonString = strings.getDeviceProvisioning();
+        //String jsonString = strings.getGetPublishedInfo();
 
         //make sure that will be able to write content to the connection output stream
         connection.setDoOutput(true);
+
 
         //Returns an output stream that writes to this connection
         try (OutputStream os = connection.getOutputStream()) {
             byte[] input = jsonString.getBytes(StandardCharsets.UTF_8);
             os.write(input, 0, input.length);
+            if(connection.getResponseCode() == 409){
+                System.out.println("Device with that name already defined");
+            }
         }
 
         //Returns an input stream that reads from this open connection
