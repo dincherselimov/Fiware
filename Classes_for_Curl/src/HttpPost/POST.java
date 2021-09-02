@@ -17,7 +17,7 @@ public class POST {
         JsonStrings strings = new JsonStrings();
 
         // Set the URL
-        String url = "http://192.168.0.104:4041/iot/devices";
+        String url = "http://192.168.0.104:1026/v1/queryContext";
         URL obj = new URL(url);
 
         //open the connection
@@ -29,16 +29,17 @@ public class POST {
         //set hte request properties(headers etc.)
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("Accept", "application/json");
-        connection.setRequestProperty("Fiware-Service", " myHome");
-        connection.setRequestProperty("Fiware-ServicePath", "/environment");
+        connection.setRequestProperty("Fiware-Service", " factory");
+        connection.setRequestProperty("Fiware-ServicePath", "/cars");
 
 
-        /**
-         * Json formatted input string
-         */
+        //Json formatted input string
 
-        String jsonString = strings.getDeviceProvisioning();
-        //String jsonString = strings.getGetPublishedInfo();
+            //String jsonString = strings.getDeviceProvisioning();
+           //String jsonString = strings.getGetPublishedInfo();
+          //String jsonString = strings.getLWM2DeviceProvisioning();
+         //String jsonString = strings.getLWMSeeEntity();
+        String jsonString = strings.getLWMSendCommand();
 
         //make sure that will be able to write content to the connection output stream
         connection.setDoOutput(true);

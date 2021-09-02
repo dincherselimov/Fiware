@@ -17,7 +17,7 @@ public class PostSendMeasures {
         JsonStrings strings = new JsonStrings();
 
         // Set the URL
-        String url = "http://192.168.0.104:1026/v1/contextEntities/LivingRoomSensor/attributes/sleepTime";
+        String url = "http://192.168.0.104:1026/v1/contextEntities/LivingRoomSensor/attributes/Temperature";
         URL obj = new URL(url);
 
         //open the connection
