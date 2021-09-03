@@ -1,37 +1,46 @@
-package TEST;
+package PahoMqttClient;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 public class PAHO {
 
-    public static void main(String[] args) {
-
-        String topic        = "mqttjavatest";
-        String content      = "Pahoto bachka  f";
-        int qos             = 2;
-        String broker       = "tcp://192.168.0.104:1883";
-        String clientId     = "JavaSample";
+    public void PahoMqttClient(){
+        String topic = "/1234/sensor6666/attrs";
+        String content = "{\"l\":8,\"t\": \"41.66\"}";
+        int qos = 2;
+        String broker = "tcp://192.168.0.104:1883";
+        String clientId = "JavaSample";
         MemoryPersistence persistence = new MemoryPersistence();
 
         try {
+            //connecting to the broker
             MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
-            System.out.println("Connecting to broker: "+broker);
+            System.out.println("Connecting to broker: "+ broker);
             sampleClient.connect(connOpts);
             System.out.println("Connected");
-            System.out.println("Publishing message: "+content);
+
+            //publishing message
+            System.out.println("Publishing message: "+ content);
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(qos);
+
+            //publishing message
             sampleClient.publish(topic, message);
             System.out.println("Message published");
+
+            //subscribing for topic
+            sampleClient.subscribe(topic);
+            System.out.println("Subscribed to topic: "+topic);
+            System.out.println("Received data: "+content);
+
+            //disconnecting
             sampleClient.disconnect();
             System.out.println("Disconnected");
             System.exit(0);
+
         } catch(MqttException me) {
             System.out.println("reason "+me.getReasonCode());
             System.out.println("msg "+me.getMessage());
@@ -42,3 +51,4 @@ public class PAHO {
         }
     }
 }
+
