@@ -7,18 +7,27 @@ import java.net.URL;
 
 public class GET {
 
+    /**
+     * Java HTTP GET Request
+     */
     public void GetRequest() {
         BufferedReader reader;
         String lines;
         StringBuilder responseContent = new StringBuilder();
         try {
-            //set the url
-            URL url = new URL("http://192.168.0.104:4041/iot/devices");
+            /**
+             * set the url
+             */
+            URL url = new URL("http://192.168.0.104:4041/iot/about");
 
-            //open the connection
+            /**
+             * open the connection
+             */
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            //set the request method and timeout
+            /**
+             * set the request method and timeout
+             */
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
@@ -28,7 +37,9 @@ public class GET {
             connection.setRequestProperty("Fiware-Service", " myHome");
             connection.setRequestProperty("Fiware-ServicePath", "/environment");
 
-            //get the response code(200 should be OK)
+            /**
+             * get the response code(200 should be OK)
+             */
             int status = connection.getResponseCode();
 
             if (status > 299) {
@@ -44,7 +55,9 @@ public class GET {
                 }
                 reader.close();
             }
-            //print the response content(result)
+            /**
+             * print the response content(result)
+             */
             System.out.println(responseContent.toString());
 
         } catch (Exception e) {

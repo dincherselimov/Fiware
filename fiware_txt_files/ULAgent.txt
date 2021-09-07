@@ -1,0 +1,161 @@
+ 							WORKING WITH ULTRALIGHT IOTAGENT 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1) Check if the Agent works properly
+----------------------------------------------------
+       curl -X GET \
+  'http://localhost:4041/iot/about'
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2) Provisioning a service group(api_key=manually)
+------------------------------------------------------------------------
+      curl -iX POST \
+  'http://localhost:4041/iot/services' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "services": [
+   {
+     "apikey":      "4jggokgpepnvsb2uv4s40d59ov",
+     "cbroker":     "http://orion:1026",
+     "entity_type": "Thing",
+     "resource":    "/iot/d"
+   }
+ ]
+}'
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3)provisioning a sensor/device
+--------------------------------------------
+        curl -iX POST \
+  'http://localhost:4041/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "motion001",
+     "entity_name": "urn:ngsi-ld:Motion:001",
+     "entity_type": "Motion",
+     "timezone":    "Europe/Berlin",
+     "attributes": [
+       { "object_id": "c", "name": "count", "type": "Integer" }
+     ],
+     "static_attributes": [
+       { "name":"refStore", "type": "Relationship", "value": "urn:ngsi-ld:Store:001"}
+     ]
+   }
+ ]
+}
+'
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4)Sendins measurements 
+---------------------------------------
+      curl -iX POST \
+  'http://localhost:7896/iot/d?k=4jggokgpepnvsb2uv4s40d59ov&i=motion001' \
+  -H 'Content-Type: text/plain' \
+  -d 'c|1'
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+5)Retrieving entity data from ContextBroker(for Motion:001)
+------------------------------------------------------
+curl -G -X GET \
+  'http://localhost:1026/v2/entities/urn:ngsi-ld:Motion:001' \
+  -d 'type=Motion' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+7) Provisioning an actuator(Transort could be HTTP or MQTT)
+------------------------------------------------------
+curl -iX POST \
+  'http://localhost:4041/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+  "devices": [
+    {
+      "device_id": "bell001",
+      "entity_name": "urn:ngsi-ld:Bell:001",
+      "entity_type": "Bell",
+      "protocol": "PDI-IoTA-UltraLight",
+      "transport": "HTTP",
+      "endpoint": "http://iot-sensors:3001/iot/bell001",
+      "commands": [
+        { "name": "ring", "type": "command" }
+       ],
+       "static_attributes": [
+         {"name":"refStore", "type": "Relationship","value": "urn:ngsi-ld:Store:001"}
+      ]
+    }
+  ]
+}
+'
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+8) List all service groups
+------------------------------------
+curl -X GET \
+  'http://localhost:4041/iot/services' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+9) Updating service group(Changing entity_type from Bell to IoT-Device)
+--------------------------------------
+curl -iX PUT \
+  'http://localhost:4041/iot/services?resource=/iot/d&apikey=4jggokgpepnvsb2uv4s40d59ov' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+  "entity_type": "IoT-Device"
+}'
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+10) Deleting service group
+--------------------------------------
+curl -iX DELETE \
+  'http://localhost:4041/iot/services/?resource=/iot/d&apikey=4jggokgpepnvsb2uv4s40d59ov' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+11) Creatin a provisioned device
+----------------------------------------------
+curl -iX POST \
+  'http://localhost:4041/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+  "devices": [
+    {
+      "device_id": "bell002",
+      "entity_name": "urn:ngsi-ld:Bell:002",
+      "entity_type": "Bell",
+      "protocol": "PDI-IoTA-UltraLight",
+      "transport": "HTTP",
+      "endpoint": "http://iot-sensors:3001/iot/bell002",
+      "commands": [
+        {
+          "name": "ring",
+          "type": "command"
+        }
+       ],
+       "static_attributes": [
+         {"name":"refStore", "type": "Relationship","value": "urn:ngsi-ld:Store:002"}
+      ]
+    }
+  ]
+}'
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+12) Reading provisioned device details
+--------------------------------------------------------
+curl -X GET \
+  'http://localhost:4041/iot/devices/bell002' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+13) Deleting provisioned device 
+--------------------------------------------------------
+curl -iX DELETE \
+  'http://localhost:4041/iot/devices/bell002' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /'
+

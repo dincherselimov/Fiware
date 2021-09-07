@@ -5,6 +5,9 @@ import PahoMqttClient.PAHO;
 
 public class Http_Con {
 
+    /**
+     * In this class methods from different classes(POST,GET) are invoked and compiled
+     */
     public static void main(String[] args) throws Exception {
 
         PAHO paho = new PAHO();
@@ -18,11 +21,11 @@ public class Http_Con {
          //call the PahoMqttClient method
         //paho.PahoMqttClient();
 
-        //call the getRequest method
-        //get.GetRequest();
-
         //call the postRequest method
         //post.PostRequest();
+
+        //call the getRequest method
+        //get.GetRequest();
 
         //call the PostSendMeasure method
         //postSendMeasures.PostSendMeasure();
